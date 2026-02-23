@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT Self-Service Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ════════════════════════════════════════════════
+     ⚙️  SUPABASE CONFIGURATIE  — pas deze 2 regels aan
+     ════════════════════════════════════════════════ -->
+<script>
+  const SUPABASE_URL    = "https://jzdrhpvcgndpttjzaaiz.supabase.co";       // bv. https://xyzxyz.supabase.co
+  const SUPABASE_ANON   = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6ZHJocHZjZ25kcHR0anphYWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NDY1NTUsImV4cCI6MjA4NzQyMjU1NX0.daJuk7MK2UwlN-fNv9g4Jjb0zDSnl10WDzmf00JIOMY";  // lange string uit Supabase dashboard
+</script>
+<!-- ════════════════════════════════════════════════ -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --purple: #6B2FFA; --purple-d: #5a26d4; --purple-l: #ede8fd;
+  --bg: #f0f2f5; --surface: #fff;
+  --border: #d1d5db; --border-l: #e5e7eb;
+  --text: #1f2937; --muted: #6b7280; --light: #9ca3af;
+  --green: #059669; --yellow: #d97706; --red: #dc2626; --blue: #0284c7;
+  --sh: 0 1px 3px rgba(0,0,0,.08); --sh2: 0 4px 12px rgba(0,0,0,.1);
+  --r: 4px; --rl: 8px;
+}
+body { font-family:'Source Sans 3','Segoe UI',sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.5; }
+
+/* NAV */
+.nav { background:#1a1a2e; height:42px; display:flex; align-items:center; padding:0 20px; position:sticky; top:0; z-index:200; box-shadow:0 2px 6px rgba(0,0,0,.4); gap:0; }
+.nav-logo { display:flex; align-items:center; gap:8px; color:#fff; font-weight:700; font-size:15px; text-decoration:none; margin-right:20px; cursor:pointer; }
+.nav-logo-mark { width:26px; height:26px; background:var(--purple); border-radius:6px; display:grid; place-items:center; font-size:14px; }
+.nav-links { display:flex; gap:2px; flex:1; }
+.nav-btn { background:none; border:none; color:rgba(255,255,255,.7); padding:6px 13px; border-radius:3px; cursor:pointer; font-size:13px; font-family:inherit; transition:all .15s; }
+.nav-btn:hover, .nav-btn.active { background:rgba(255,255,255,.12); color:#fff; }
+.nav-right { display:flex; align-items:center; gap:6px; margin-left:auto; }
+.avatar { width:28px; height:28px; background:var(--purple); border-radius:50%; display:grid; place-items:center; color:#fff; font-size:11px; font-weight:700; cursor:pointer; }
+.admin-btn { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; border-radius:4px; padding:4px 12px; font-size:12px; cursor:pointer; font-family:inherit; transition:all .15s; }
+.admin-btn:hover { background:rgba(255,255,255,.18); }
+.admin-btn.on { background:var(--purple); border-color:var(--purple); }
+
+/* HERO */
+.hero { background:linear-gradient(135deg,#16213e 0%,#0d1b3e 55%,#1a1040 100%); padding:52px 0 60px; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:-80px; right:-80px; width:500px; height:500px; background:radial-gradient(circle,rgba(107,47,250,.25) 0%,transparent 65%); pointer-events:none; }
+.hero-inner { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 32px; text-align:center; }
+.hero h1 { color:#fff; font-size:26px; font-weight:600; margin-bottom:8px; letter-spacing:-.3px; }
+.hero p { color:rgba(255,255,255,.55); font-size:15px; margin-bottom:28px; }
+.search-wrap { max-width:580px; margin:0 auto; position:relative; }
+.search-input { width:100%; padding:13px 18px 13px 46px; border-radius:40px; border:none; font-size:14px; font-family:inherit; background:#fff; outline:none; box-shadow:0 4px 20px rgba(0,0,0,.25); transition:box-shadow .2s; }
+.search-input:focus { box-shadow:0 4px 24px rgba(107,47,250,.3); }
+.search-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:17px; pointer-events:none; }
+.search-submit { position:absolute; right:5px; top:50%; transform:translateY(-50%); background:var(--purple); color:#fff; border:none; border-radius:30px; padding:8px 18px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; }
+.search-submit:hover { background:var(--purple-d); }
+
+/* MAIN */
+.main { max-width:1200px; margin:0 auto; padding:28px 32px 64px; }
+
+/* ALERT */
+.alert { display:flex; align-items:center; gap:10px; padding:11px 16px; border-radius:var(--r); border:1px solid; margin-bottom:22px; font-size:13px; }
+.alert-warn { background:#fff8ed; border-color:#fed7aa; border-left:4px solid #f97316; color:#92400e; }
+.alert-info { background:#eff6ff; border-color:#bfdbfe; border-left:4px solid var(--blue); color:#1e40af; }
+.alert-err  { background:#fef2f2; border-color:#fecaca; border-left:4px solid var(--red); color:#7f1d1d; }
+
+/* SECTION HEADER */
+.sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.sec-label { font-size:17px; font-weight:600; }
+.sec-link { color:var(--purple); text-decoration:none; font-size:13px; font-weight:600; cursor:pointer; }
+.sec-link:hover { text-decoration:underline; }
+
+/* CATEGORY GRID */
+.cat-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:28px; }
+.cat-tile { background:var(--surface); border:1px solid var(--border-l); border-radius:var(--rl); padding:18px 10px; text-align:center; cursor:pointer; transition:all .15s; box-shadow:var(--sh); }
+.cat-tile:hover { border-color:var(--purple); box-shadow:0 4px 14px rgba(107,47,250,.14); transform:translateY(-2px); }
+.cat-tile.sel { border-color:var(--purple); background:var(--purple-l); }
+.cat-icon-wrap { width:46px; height:46px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-size:21px; }
+.cat-name { font-size:12px; font-weight:600; line-height:1.3; }
+
+/* TWO-COL */
+.two-col { display:grid; grid-template-columns:1fr 330px; gap:20px; align-items:start; }
+
+/* CARD */
+.card { background:var(--surface); border:1px solid var(--border-l); border-radius:var(--rl); box-shadow:var(--sh); overflow:hidden; }
+.card-head { padding:14px 20px; border-bottom:1px solid var(--border-l); display:flex; align-items:center; gap:10px; }
+.card-head-icon { width:30px; height:30px; background:var(--purple-l); border-radius:6px; display:grid; place-items:center; font-size:15px; flex-shrink:0; }
+.card-title { font-size:14px; font-weight:600; }
+.card-sub { font-size:12px; color:var(--muted); margin-top:1px; }
+.card-body { padding:20px; }
+
+/* FORM */
+.frow { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+.frow.full { grid-template-columns:1fr; }
+.fg { display:flex; flex-direction:column; gap:4px; }
+.flabel { font-size:13px; font-weight:600; }
+.req { color:var(--red); margin-left:2px; }
+.finput, .fsel, .ftextarea {
+  width:100%; padding:8px 11px; border:1px solid var(--border); border-radius:var(--r);
+  font-size:14px; font-family:inherit; color:var(--text); background:#fff; outline:none;
+  transition:border-color .15s, box-shadow .15s; appearance:none;
+}
+.finput:focus, .fsel:focus, .ftextarea:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(107,47,250,.1); }
+.finput:disabled { background:var(--bg); color:var(--muted); cursor:not-allowed; }
+.fsel {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 11px center; padding-right:30px; cursor:pointer;
+}
+.ftextarea { resize:vertical; min-height:96px; line-height:1.6; }
+.fhint { font-size:11px; color:var(--muted); margin-top:2px; }
+.divider { border:none; border-top:1px solid var(--border-l); margin:18px 0; }
+
+/* PRIORITY */
+.prio-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.prio-btn { border:1.5px solid var(--border); background:#fff; border-radius:var(--r); padding:10px 6px; text-align:center; cursor:pointer; transition:all .15s; font-family:inherit; }
+.prio-btn:hover { border-color:var(--purple); background:var(--purple-l); }
+.prio-btn.low  { border-color:var(--green);  background:#d1fae5; color:#065f46; }
+.prio-btn.med  { border-color:var(--yellow); background:#fef3c7; color:#92400e; }
+.prio-btn.high { border-color:var(--red);    background:#fee2e2; color:#7f1d1d; }
+.picon { font-size:17px; display:block; margin-bottom:2px; }
+.plabel { font-size:12px; font-weight:600; display:block; }
+.pdesc { font-size:11px; color:var(--muted); display:block; margin-top:1px; }
+
+/* ACTIONS */
+.form-actions { display:flex; gap:8px; justify-content:flex-end; }
+.btn { padding:8px 18px; border-radius:var(--r); font-size:14px; font-weight:600; cursor:pointer; border:none; font-family:inherit; transition:all .15s; display:inline-flex; align-items:center; gap:5px; }
+.btn-primary { background:var(--purple); color:#fff; }
+.btn-primary:hover { background:var(--purple-d); }
+.btn-primary:disabled { opacity:.6; cursor:not-allowed; }
+.btn-outline { background:#fff; color:var(--text); border:1px solid var(--border); }
+.btn-outline:hover { background:var(--bg); }
+.btn-ghost { background:none; color:var(--purple); border:1px solid var(--purple); }
+.btn-ghost:hover { background:var(--purple-l); }
+.btn-sm { padding:5px 12px; font-size:12px; }
+.btn-danger { background:#fee2e2; color:var(--red); border:1px solid #fecaca; }
+.btn-danger:hover { background:#fecaca; }
+
+/* REQ LIST */
+.req-list { padding:0; }
+.req-row { display:flex; align-items:flex-start; gap:10px; padding:12px 18px; border-bottom:1px solid var(--border-l); cursor:pointer; transition:background .1s; color:var(--text); }
+.req-row:last-child { border-bottom:none; }
+.req-row:hover { background:#f9fafb; }
+.req-dot { width:9px; height:9px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+.req-info { flex:1; min-width:0; }
+.req-title { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.req-meta { font-size:11px; color:var(--muted); margin-top:1px; }
+.badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; text-transform:uppercase; letter-spacing:.3px; white-space:nowrap; flex-shrink:0; }
+
+/* STATS */
+.stats-row { display:grid; gap:1px; background:var(--border-l); }
+.stat-cell { background:var(--surface); padding:14px 10px; text-align:center; }
+.stat-n { font-size:22px; font-weight:700; color:var(--purple); line-height:1; margin-bottom:3px; }
+.stat-l { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; }
+
+/* QUICK LINKS */
+.qlinks { padding:14px 16px; display:flex; flex-direction:column; gap:2px; }
+.qlink { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:var(--r); cursor:pointer; text-decoration:none; color:var(--text); font-size:13px; font-weight:500; transition:background .1s; }
+.qlink:hover { background:var(--bg); color:var(--purple); }
+.qicon { width:26px; height:26px; border-radius:5px; display:grid; place-items:center; font-size:13px; flex-shrink:0; }
+
+/* ALLE VERZOEKEN TABLE */
+.filter-bar { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
+.filter-btn { border:1px solid var(--border); background:#fff; border-radius:20px; padding:5px 14px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:all .15s; }
+.filter-btn:hover { border-color:var(--purple); color:var(--purple); }
+.filter-btn.active { background:var(--purple); color:#fff; border-color:var(--purple); }
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; }
+thead th { background:#f9fafb; padding:10px 14px; text-align:left; font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--border-l); white-space:nowrap; }
+tbody td { padding:12px 14px; border-bottom:1px solid var(--border-l); font-size:13px; vertical-align:middle; }
+tbody tr:last-child td { border-bottom:none; }
+tbody tr:hover td { background:#f9fafb; }
+.prio-chip { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:2px 8px; border-radius:10px; }
+.prio-laag  { background:#d1fae5; color:#065f46; }
+.prio-gemiddeld { background:#fef3c7; color:#92400e; }
+.prio-hoog  { background:#fee2e2; color:#7f1d1d; }
+
+/* STATUS SELECT in table */
+.status-sel { border:1px solid var(--border); border-radius:var(--r); padding:4px 8px; font-family:inherit; font-size:12px; background:#fff; cursor:pointer; outline:none; }
+.status-sel:focus { border-color:var(--purple); }
+
+/* MODAL */
+.modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:500; display:flex; align-items:center; justify-content:center; padding:20px; }
+.modal { background:#fff; border-radius:var(--rl); box-shadow:0 20px 60px rgba(0,0,0,.25); width:100%; max-width:600px; max-height:90vh; overflow-y:auto; }
+.modal-head { padding:18px 24px; border-bottom:1px solid var(--border-l); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:#fff; z-index:1; }
+.modal-title { font-size:16px; font-weight:700; }
+.modal-close { background:none; border:none; font-size:20px; cursor:pointer; color:var(--muted); line-height:1; }
+.modal-body { padding:24px; }
+.detail-row { display:flex; gap:8px; margin-bottom:12px; font-size:13px; }
+.detail-label { font-weight:600; min-width:120px; color:var(--muted); flex-shrink:0; }
+.detail-val { color:var(--text); }
+
+/* TOAST */
+.toast-wrap { position:fixed; bottom:24px; right:24px; z-index:999; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+.toast { background:#fff; border:1px solid var(--border); border-radius:var(--rl); padding:13px 16px; box-shadow:var(--sh2); display:flex; align-items:flex-start; gap:10px; min-width:280px; max-width:340px; transform:translateX(120%); opacity:0; transition:all .3s cubic-bezier(.34,1.56,.64,1); pointer-events:all; }
+.toast.show { transform:translateX(0); opacity:1; }
+.toast.success { border-left:4px solid var(--green); }
+.toast.info    { border-left:4px solid var(--blue); }
+.toast.error   { border-left:4px solid var(--red); }
+.toast-body { flex:1; }
+.toast-t { font-size:13px; font-weight:600; margin-bottom:2px; }
+.toast-d { font-size:12px; color:var(--muted); }
+.toast-x { background:none; border:none; color:var(--muted); cursor:pointer; font-size:15px; }
+
+/* SPINNER */
+.spinner { display:inline-block; width:18px; height:18px; border:2px solid rgba(107,47,250,.2); border-top-color:var(--purple); border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-wrap { display:flex; align-items:center; justify-content:center; padding:40px; gap:12px; color:var(--muted); font-size:14px; }
+.empty-state { text-align:center; padding:48px 20px; color:var(--muted); }
+.empty-state .big { font-size:40px; margin-bottom:12px; }
+.empty-state p { font-size:14px; }
+
+@media(max-width:900px){
+  .two-col { grid-template-columns:1fr; }
+  .cat-grid { grid-template-columns:repeat(3,1fr); }
+  .nav-links { display:none; }
+}
+@media(max-width:600px){
+  .main { padding:16px 16px 48px; }
+  .hero-inner { padding:0 16px; }
+  .cat-grid { grid-template-columns:repeat(2,1fr); }
+  .frow { grid-template-columns:1fr; }
+  .prio-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav-logo" onclick="setView('home')">
+    <div class="nav-logo-mark">⚡</div>
+    Now<span style="font-weight:300">Service</span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-btn active" id="btn-home" onclick="setView('home')">🏠 Home</button>
+    <button class="nav-btn" id="btn-alle" onclick="setView('alle')">📋 Alle verzoeken</button>
+  </div>
+  <div class="nav-right">
+    <button class="admin-btn" id="adminBtn" onclick="toggleAdmin()">🔒 Beheer</button>
+    <div class="avatar">IT</div>
+  </div>
+</header>
+
+<!-- SETUP WARNING (shown when URL not configured) -->
+<div id="setupBanner" class="alert alert-warn" style="margin:0;border-radius:0;display:none">
+  ⚠️ <strong>Configuratie vereist</strong> — Voeg je Supabase URL en ANON KEY toe bovenaan het HTML-bestand. Zie de handleiding (<code>SETUP.md</code>).
+</div>
+
+<!-- HOME VIEW -->
+<div id="view-home">
+  <section class="hero">
+    <div class="hero-inner">
+      <h1>Welkom in het IT Self-Service Portaal</h1>
+      <p>Dien een verzoek in, bekijk de status of zoek in de kennisbank.</p>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" id="searchInput" placeholder="Zoek naar services, antwoorden of verzoeken..." oninput="filterSearch()">
+        <button class="search-submit">Zoeken</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="main">
+    <div id="dbError"></div>
+
+    <div class="alert alert-warn" style="display:none" id="maintAlert">
+      <span>📢</span><span><strong>Gepland onderhoud</strong> — Zaterdag 1 maart van 22:00–02:00 is het portaal tijdelijk niet bereikbaar.</span>
+    </div>
+
+    <div class="sec-head">
+      <span class="sec-label">Servicecatalogus</span>
+    </div>
+
+    <div class="cat-grid">
+      <div class="cat-tile sel" data-cat="hardware" onclick="selectCat(this)">
+        <div class="cat-icon-wrap" style="background:#ede8fd">🖥️</div>
+        <div class="cat-name">Hardware &amp; Apparatuur</div>
+      </div>
+      <div class="cat-tile" data-cat="software" onclick="selectCat(this)">
+        <div class="cat-icon-wrap" style="background:#dbeafe">💿</div>
+        <div class="cat-name">Software &amp; Licenties</div>
+      </div>
+      <div class="cat-tile" data-cat="netwerk" onclick="selectCat(this)">
+        <div class="cat-icon-wrap" style="background:#ccfbf1">🌐</div>
+        <div class="cat-name">Netwerk &amp; Verbinding</div>
+      </div>
+      <div class="cat-tile" data-cat="toegang" onclick="selectCat(this)">
+        <div class="cat-icon-wrap" style="background:#ffedd5">🔑</div>
+        <div class="cat-name">Toegang &amp; Beveiliging</div>
+      </div>
+      <div class="cat-tile" data-cat="telefonie" onclick="selectCat(this)">
+        <div class="cat-icon-wrap" style="background:#d1fae5">📱</div>
+        <div class="cat-name">Telefonie &amp; Mobiel</div>
+      </div>
+      <div class="cat-tile" data-cat="overig" onclick="selectCat(this)">
+        <div class="cat-icon-wrap" style="background:#fee2e2">🔧</div>
+        <div class="cat-name">Overige verzoeken</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+
+      <!-- FORM -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-icon">📝</div>
+          <div>
+            <div class="card-title">Nieuw verzoek indienen</div>
+            <div class="card-sub">Velden met * zijn verplicht</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form id="reqForm" onsubmit="submitReq(event)">
+            <div class="frow">
+              <div class="fg">
+                <label class="flabel">Naam <span class="req">*</span></label>
+                <input class="finput" id="f-naam" type="text" placeholder="Jan de Vries" required>
+              </div>
+              <div class="fg">
+                <label class="flabel">E-mailadres <span class="req">*</span></label>
+                <input class="finput" id="f-email" type="email" placeholder="jan@bedrijf.nl" required>
+              </div>
+            </div>
+            <div class="frow">
+              <div class="fg">
+                <label class="flabel">Afdeling</label>
+                <select class="fsel" id="f-afdeling">
+                  <option value="">-- Selecteer --</option>
+                  <option>Finance</option><option>HR</option><option>Sales</option>
+                  <option>Marketing</option><option>Operations</option><option>IT</option><option>Directie</option>
+                </select>
+              </div>
+              <div class="fg">
+                <label class="flabel">Categorie</label>
+                <select class="fsel" id="f-categorie" onchange="syncCat(this.value)">
+                  <option value="hardware">Hardware &amp; Apparatuur</option>
+                  <option value="software">Software &amp; Licenties</option>
+                  <option value="netwerk">Netwerk &amp; Verbinding</option>
+                  <option value="toegang">Toegang &amp; Beveiliging</option>
+                  <option value="telefonie">Telefonie &amp; Mobiel</option>
+                  <option value="overig">Overige verzoeken</option>
+                </select>
+              </div>
+            </div>
+            <div class="frow full">
+              <div class="fg">
+                <label class="flabel">Onderwerp <span class="req">*</span></label>
+                <input class="finput" id="f-onderwerp" type="text" placeholder="Korte omschrijving van het probleem of verzoek" required>
+              </div>
+            </div>
+            <div class="frow full">
+              <div class="fg">
+                <label class="flabel">Omschrijving</label>
+                <textarea class="ftextarea" id="f-omschrijving" placeholder="Beschrijf het probleem zo gedetailleerd mogelijk. Vermeld foutmeldingen, stappen die je al hebt geprobeerd en wanneer het begon."></textarea>
+                <div class="fhint">Hoe meer details, hoe sneller we kunnen helpen.</div>
+              </div>
+            </div>
+            <hr class="divider">
+            <div class="frow">
+              <div class="fg">
+                <label class="flabel">Prioriteit <span class="req">*</span></label>
+                <div class="prio-grid">
+                  <button type="button" class="prio-btn low" data-p="Laag" onclick="setPrio(this)">
+                    <span class="picon">🟢</span><span class="plabel">Laag</span><span class="pdesc">Geen urgentie</span>
+                  </button>
+                  <button type="button" class="prio-btn" data-p="Gemiddeld" onclick="setPrio(this)">
+                    <span class="picon">🟡</span><span class="plabel">Gemiddeld</span><span class="pdesc">Werk gaat door</span>
+                  </button>
+                  <button type="button" class="prio-btn" data-p="Hoog" onclick="setPrio(this)">
+                    <span class="picon">🔴</span><span class="plabel">Hoog</span><span class="pdesc">Blokkeert werk</span>
+                  </button>
+                </div>
+              </div>
+              <div class="fg">
+                <label class="flabel">Gewenste datum</label>
+                <input class="finput" id="f-datum" type="date">
+                <div class="fhint">Optioneel — laat leeg als er geen deadline is.</div>
+              </div>
+            </div>
+            <hr class="divider">
+            <div class="form-actions">
+              <button type="button" class="btn btn-outline" onclick="clearForm()">Annuleren</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn">✔&nbsp; Verzoek indienen</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Recent -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon">📋</div>
+            <div>
+              <div class="card-title">Recente verzoeken</div>
+              <div class="card-sub">Laatste activiteit</div>
+            </div>
+          </div>
+          <div id="recentList">
+            <div class="loading-wrap"><div class="spinner"></div> Laden...</div>
+          </div>
+          <div class="stats-row" id="statsRow" style="grid-template-columns:repeat(4,1fr)">
+            <div class="stat-cell"><div class="stat-n" id="s-nieuw">–</div><div class="stat-l">Nieuw</div></div>
+            <div class="stat-cell"><div class="stat-n" id="s-open">–</div><div class="stat-l">Open</div></div>
+            <div class="stat-cell"><div class="stat-n" id="s-bezig">–</div><div class="stat-l">In behandeling</div></div>
+            <div class="stat-cell"><div class="stat-n" id="s-opgelost">–</div><div class="stat-l">Opgelost</div></div>
+          </div>
+        </div>
+
+        <!-- Quick links -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon">⚡</div>
+            <div><div class="card-title">Snelle acties</div></div>
+          </div>
+          <div class="qlinks">
+            <a class="qlink" href="#"><div class="qicon" style="background:#dbeafe">📖</div> Kennisbank doorzoeken</a>
+            <a class="qlink" href="#"><div class="qicon" style="background:#ede8fd">🔄</div> Wachtwoord resetten</a>
+            <a class="qlink" href="#"><div class="qicon" style="background:#d1fae5">🖨️</div> Printer toevoegen</a>
+            <a class="qlink" href="#"><div class="qicon" style="background:#ffedd5">👤</div> Nieuwe medewerker aanmelden</a>
+            <a class="qlink" href="#"><div class="qicon" style="background:#ccfbf1">📊</div> Softwarelicentie aanvragen</a>
+            <a class="qlink" href="#"><div class="qicon" style="background:#fee2e2">🆘</div> Spoedmelding indienen</a>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </main>
+</div>
+
+<!-- ALLE VERZOEKEN VIEW -->
+<div id="view-alle" style="display:none">
+  <main class="main">
+    <div class="sec-head" style="margin-bottom:16px">
+      <span class="sec-label">📋 Alle verzoeken</span>
+      <button class="btn btn-primary btn-sm" onclick="loadRequests()">🔄 Vernieuwen</button>
+    </div>
+
+    <div class="filter-bar">
+      <span style="font-size:13px;font-weight:600;color:var(--muted)">Filter:</span>
+      <button class="filter-btn active" data-f="Alle" onclick="setFilter(this)">Alle</button>
+      <button class="filter-btn" data-f="Nieuw" onclick="setFilter(this)">Nieuw</button>
+      <button class="filter-btn" data-f="Open" onclick="setFilter(this)">Open</button>
+      <button class="filter-btn" data-f="In behandeling" onclick="setFilter(this)">In behandeling</button>
+      <button class="filter-btn" data-f="Opgelost" onclick="setFilter(this)">Opgelost</button>
+      <button class="filter-btn" data-f="Gesloten" onclick="setFilter(this)">Gesloten</button>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Onderwerp</th>
+              <th>Naam</th>
+              <th>Afdeling</th>
+              <th>Categorie</th>
+              <th>Prioriteit</th>
+              <th>Status</th>
+              <th>Ingediend</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="reqTableBody">
+            <tr><td colspan="9"><div class="loading-wrap"><div class="spinner"></div> Laden...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-backdrop" id="modal" style="display:none" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">Verzoekdetails</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap">
+  <div class="toast" id="toast">
+    <div style="font-size:18px;flex-shrink:0" id="toast-ico">✅</div>
+    <div class="toast-body">
+      <div class="toast-t" id="toast-t">Klaar</div>
+      <div class="toast-d" id="toast-d"></div>
+    </div>
+    <button class="toast-x" onclick="hideToast()">✕</button>
+  </div>
+</div>
+
+<script>
+// ─── HELPERS ────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+function timeAgo(ts) {
+  const d = Date.now() - new Date(ts).getTime();
+  const m = Math.floor(d/60000);
+  if(m<1) return 'Zojuist';
+  if(m<60) return m+' min geleden';
+  const h = Math.floor(m/60);
+  if(h<24) return h+' uur geleden';
+  return Math.floor(h/24)+' dag(en) geleden';
+}
+
+const BADGE_STYLE = {
+  'Nieuw':          'background:#ede8fd;color:#5b21b6',
+  'Open':           'background:#dbeafe;color:#1d4ed8',
+  'In behandeling': 'background:#fef3c7;color:#b45309',
+  'Opgelost':       'background:#d1fae5;color:#065f46',
+  'Gesloten':       'background:#f3f4f6;color:#374151',
+};
+const DOT_COLOR = {
+  'Nieuw':'#6B2FFA','Open':'#0284c7','In behandeling':'#d97706','Opgelost':'#059669','Gesloten':'#9ca3af'
+};
+const PRIO_CHIP = {
+  'Laag':     'prio-laag',
+  'Gemiddeld':'prio-gemiddeld',
+  'Hoog':     'prio-hoog',
+};
+
+// ─── SUPABASE API ────────────────────────────────────────
+const isConfigured = () => SUPABASE_URL !== 'https://jzdrhpvcgndpttjzaaiz.supabase.co';
+
+async function dbFetch(path, opts={}) {
+  const url = SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/' + path;
+  const res = await fetch(url, {
+    ...opts,
+    headers: {
+      'apikey': SUPABASE_ANON,
+      'Authorization': 'Bearer ' + SUPABASE_ANON,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || 'return=representation',
+      ...opts.headers,
+    }
+  });
+  if(!res.ok) {
+    const err = await res.json().catch(()=>({message:res.statusText}));
+    throw new Error(err.message || res.statusText);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : [];
+}
+
+async function getRequests() {
+  return dbFetch('it_verzoeken?order=created_at.desc&limit=200');
+}
+
+async function insertRequest(data) {
+  return dbFetch('it_verzoeken', {
+    method:'POST', prefer:'return=representation',
+    body: JSON.stringify(data),
+  });
+}
+
+async function updateStatus(id, status) {
+  return dbFetch(`it_verzoeken?id=eq.${id}`, {
+    method:'PATCH', prefer:'return=representation',
+    body: JSON.stringify({ status }),
+  });
+}
+
+async function deleteRequest(id) {
+  return dbFetch(`it_verzoeken?id=eq.${id}`, {
+    method:'DELETE', prefer:'',
+  });
+}
+
+// ─── STATE ──────────────────────────────────────────────
+let allRequests = [];
+let currentFilter = 'Alle';
+let selectedCatId = 'hardware';
+let selectedPrio = 'Laag';
+let isAdmin = false;
+let currentView = 'home';
+
+// ─── INIT ────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if(!isConfigured()) {
+    $('setupBanner').style.display = 'flex';
+  }
+  loadRequests();
+  setInterval(loadRequests, 30000); // auto-refresh every 30s
+});
+
+async function loadRequests() {
+  if(!isConfigured()) {
+    renderRecentMock();
+    return;
+  }
+  try {
+    allRequests = await getRequests();
+    renderRecent();
+    renderStats();
+    if(currentView === 'alle') renderTable();
+  } catch(e) {
+    $('dbError').innerHTML = `<div class="alert alert-err">❌ Database fout: ${e.message} — Controleer je Supabase configuratie.</div>`;
+  }
+}
+
+// ─── VIEWS ──────────────────────────────────────────────
+function setView(v) {
+  currentView = v;
+  $('view-home').style.display  = v === 'home' ? '' : 'none';
+  $('view-alle').style.display  = v === 'alle' ? '' : 'none';
+  $('btn-home').classList.toggle('active', v==='home');
+  $('btn-alle').classList.toggle('active', v==='alle');
+  if(v === 'alle') renderTable();
+}
+
+// ─── CATEGORY ───────────────────────────────────────────
+function selectCat(el) {
+  document.querySelectorAll('.cat-tile').forEach(t=>t.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedCatId = el.dataset.cat;
+  $('f-categorie').value = selectedCatId;
+}
+
+function syncCat(val) {
+  selectedCatId = val;
+  document.querySelectorAll('.cat-tile').forEach(t=>{
+    t.classList.toggle('sel', t.dataset.cat===val);
+  });
+}
+
+// ─── PRIORITY ────────────────────────────────────────────
+function setPrio(el) {
+  document.querySelectorAll('.prio-btn').forEach(b=>{
+    b.classList.remove('low','med','high');
+  });
+  const p = el.dataset.p;
+  selectedPrio = p;
+  if(p==='Laag') el.classList.add('low');
+  else if(p==='Gemiddeld') el.classList.add('med');
+  else el.classList.add('high');
+}
+
+// ─── SUBMIT ──────────────────────────────────────────────
+async function submitReq(e) {
+  e.preventDefault();
+  if(!isConfigured()) {
+    showToast('Supabase is nog niet geconfigureerd. Zie SETUP.md.', 'error'); return;
+  }
+  const btn = $('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>&nbsp; Bezig...';
+
+  const payload = {
+    naam:         $('f-naam').value.trim(),
+    email:        $('f-email').value.trim(),
+    afdeling:     $('f-afdeling').value,
+    categorie:    selectedCatId,
+    onderwerp:    $('f-onderwerp').value.trim(),
+    omschrijving: $('f-omschrijving').value.trim(),
+    prioriteit:   selectedPrio,
+    datum:        $('f-datum').value || null,
+    status:       'Nieuw',
+  };
+
+  try {
+    await insertRequest(payload);
+    clearForm();
+    await loadRequests();
+    showToast('Verzoek ingediend! We nemen zo snel mogelijk contact op.', 'success');
+  } catch(err) {
+    showToast('Fout bij indienen: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✔&nbsp; Verzoek indienen';
+  }
+}
+
+function clearForm() {
+  $('reqForm').reset();
+  document.querySelectorAll('.prio-btn').forEach(b=>b.classList.remove('low','med','high'));
+  document.querySelector('[data-p="Laag"]').classList.add('low');
+  selectedPrio = 'Laag';
+}
+
+// ─── RECENT LIST ─────────────────────────────────────────
+function renderRecent() {
+  const list = $('recentList');
+  const recent = allRequests.slice(0, 5);
+  if(!recent.length) {
+    list.innerHTML = '<div class="empty-state"><div class="big">📭</div><p>Nog geen verzoeken</p></div>';
+    return;
+  }
+  list.innerHTML = recent.map(r => `
+    <div class="req-row" onclick="openModal(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+      <span class="req-dot" style="background:${DOT_COLOR[r.status]||'#6B2FFA'}"></span>
+      <div class="req-info">
+        <div class="req-title">${esc(r.onderwerp)}</div>
+        <div class="req-meta">${esc(r.naam)} · ${timeAgo(r.created_at)}</div>
+      </div>
+      <span class="badge" style="${BADGE_STYLE[r.status]||BADGE_STYLE['Nieuw']}">${r.status}</span>
+    </div>
+  `).join('');
+}
+
+function renderRecentMock() {
+  $('recentList').innerHTML = `<div class="empty-state"><div class="big">🔧</div><p>Configureer Supabase om verzoeken te zien</p></div>`;
+}
+
+function renderStats() {
+  const cnt = s => allRequests.filter(r=>r.status===s).length;
+  $('s-nieuw').textContent  = cnt('Nieuw');
+  $('s-open').textContent   = cnt('Open');
+  $('s-bezig').textContent  = cnt('In behandeling');
+  $('s-opgelost').textContent = cnt('Opgelost');
+}
+
+// ─── TABLE ───────────────────────────────────────────────
+function renderTable() {
+  const data = currentFilter === 'Alle'
+    ? allRequests
+    : allRequests.filter(r=>r.status===currentFilter);
+
+  const tbody = $('reqTableBody');
+  if(!data.length) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><div class="big">📭</div><p>Geen verzoeken gevonden</p></div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map(r => `
+    <tr>
+      <td style="font-size:11px;color:var(--muted);font-weight:600">${esc(r.id?.toString().slice(-6) || '–')}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">${esc(r.onderwerp)}</td>
+      <td>${esc(r.naam)}</td>
+      <td>${esc(r.afdeling||'–')}</td>
+      <td style="font-size:12px">${esc(r.categorie||'–')}</td>
+      <td><span class="prio-chip ${PRIO_CHIP[r.prioriteit]||'prio-laag'}">${r.prioriteit}</span></td>
+      <td>
+        ${isAdmin
+          ? `<select class="status-sel" onchange="changeStatus(${r.id},this.value)">
+              ${['Nieuw','Open','In behandeling','Opgelost','Gesloten'].map(s=>`<option${r.status===s?' selected':''}>${s}</option>`).join('')}
+            </select>`
+          : `<span class="badge" style="${BADGE_STYLE[r.status]||BADGE_STYLE['Nieuw']}">${r.status}</span>`
+        }
+      </td>
+      <td style="font-size:11px;color:var(--muted);white-space:nowrap">${timeAgo(r.created_at)}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-outline btn-sm" onclick="openModal(${JSON.stringify(r).replace(/"/g,'&quot;')})">👁 Details</button>
+        ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="confirmDelete(${r.id})" style="margin-left:4px">🗑</button>` : ''}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function setFilter(el) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  currentFilter = el.dataset.f;
+  renderTable();
+}
+
+async function changeStatus(id, status) {
+  try {
+    await updateStatus(id, status);
+    await loadRequests();
+    showToast(`Status bijgewerkt naar "${status}"`, 'info');
+  } catch(e) { showToast('Fout: '+e.message,'error'); }
+}
+
+async function confirmDelete(id) {
+  if(!confirm('Weet je zeker dat je dit verzoek wilt verwijderen?')) return;
+  try {
+    await deleteRequest(id);
+    await loadRequests();
+    showToast('Verzoek verwijderd', 'info');
+  } catch(e) { showToast('Fout: '+e.message,'error'); }
+}
+
+// ─── MODAL ───────────────────────────────────────────────
+function openModal(r) {
+  if(typeof r === 'string') r = JSON.parse(r);
+  $('modal-title').textContent = `Verzoek – ${r.onderwerp}`;
+  $('modal-body').innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">
+      <span class="badge" style="${BADGE_STYLE[r.status]||BADGE_STYLE['Nieuw']};font-size:11px">${r.status}</span>
+      <span class="prio-chip ${PRIO_CHIP[r.prioriteit]||'prio-laag'}">${r.prioriteit}</span>
+    </div>
+    ${row('ID', r.id?.toString().slice(-6)||'–')}
+    ${row('Ingediend door', r.naam)}
+    ${row('E-mail', `<a href="mailto:${esc(r.email)}" style="color:var(--purple)">${esc(r.email)}</a>`)}
+    ${row('Afdeling', r.afdeling||'–')}
+    ${row('Categorie', r.categorie||'–')}
+    ${row('Datum ingediend', new Date(r.created_at).toLocaleString('nl-NL'))}
+    ${r.datum ? row('Gewenste datum', r.datum) : ''}
+    <hr class="divider">
+    <div class="fg" style="margin-bottom:12px">
+      <div class="flabel" style="margin-bottom:4px">Omschrijving</div>
+      <div style="background:var(--bg);border-radius:var(--r);padding:12px 14px;font-size:13px;line-height:1.7;color:var(--text)">${esc(r.omschrijving||'Geen omschrijving opgegeven.')}</div>
+    </div>
+    ${isAdmin ? `
+      <hr class="divider">
+      <div class="fg">
+        <label class="flabel">Status wijzigen</label>
+        <select class="fsel" onchange="changeStatus(${r.id},this.value);closeModal()">
+          ${['Nieuw','Open','In behandeling','Opgelost','Gesloten'].map(s=>`<option${r.status===s?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>` : ''}
+  `;
+  $('modal').style.display = 'flex';
+}
+
+function row(label, val) {
+  return `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-val">${val}</span></div>`;
+}
+
+function closeModal(e) {
+  if(!e || e.target===$('modal')) $('modal').style.display='none';
+}
+
+// ─── ADMIN ───────────────────────────────────────────────
+function toggleAdmin() {
+  if(isAdmin) {
+    isAdmin = false;
+    $('adminBtn').textContent = '🔒 Beheer';
+    $('adminBtn').classList.remove('on');
+    showToast('Beheerdermodus uitgeschakeld','info');
+  } else {
+    const pw = prompt('Beheerderswachtwoord:');
+    if(pw === 'admin123') {
+      isAdmin = true;
+      $('adminBtn').textContent = '🔓 Beheerder';
+      $('adminBtn').classList.add('on');
+      showToast('Beheerdermodus actief','info');
+      if(currentView==='alle') renderTable();
+    } else if(pw !== null) {
+      showToast('Onjuist wachtwoord','error');
+    }
+  }
+}
+
+// ─── SEARCH ──────────────────────────────────────────────
+function filterSearch() {
+  const q = $('searchInput').value.toLowerCase();
+  if(!q) { renderRecent(); return; }
+  const filtered = allRequests.filter(r =>
+    r.onderwerp?.toLowerCase().includes(q) ||
+    r.naam?.toLowerCase().includes(q) ||
+    r.omschrijving?.toLowerCase().includes(q)
+  );
+  const list = $('recentList');
+  if(!filtered.length) { list.innerHTML='<div class="empty-state"><div class="big">🔍</div><p>Geen resultaten</p></div>'; return; }
+  list.innerHTML = filtered.slice(0,8).map(r=>`
+    <div class="req-row" onclick="openModal(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+      <span class="req-dot" style="background:${DOT_COLOR[r.status]||'#6B2FFA'}"></span>
+      <div class="req-info">
+        <div class="req-title">${esc(r.onderwerp)}</div>
+        <div class="req-meta">${esc(r.naam)} · ${timeAgo(r.created_at)}</div>
+      </div>
+      <span class="badge" style="${BADGE_STYLE[r.status]}">${r.status}</span>
+    </div>
+  `).join('');
+}
+
+// ─── TOAST ───────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type='success') {
+  const icons = {success:'✅',info:'ℹ️',error:'❌'};
+  $('toast-ico').textContent = icons[type]||'✅';
+  $('toast-t').textContent   = type==='error' ? 'Fout opgetreden' : type==='info' ? 'Melding' : 'Gelukt!';
+  $('toast-d').textContent   = msg;
+  const t = $('toast');
+  t.className = `toast show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, 4500);
+}
+
+function hideToast() {
+  $('toast').classList.remove('show');
+}
+
+// ─── ESCAPE ──────────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

@@ -528,7 +528,7 @@ const PRIO_CHIP = {
 };
 
 // ─── SUPABASE API ────────────────────────────────────────
-const isConfigured = () => SUPABASE_URL !== 'https://jzdrhpvcgndpttjzaaiz.supabase.co';
+const isConfigured = () => SUPABASE_URL !== 'JOUW_SUPABASE_URL' && SUPABASE_URL.startsWith('https://');
 
 async function dbFetch(path, opts={}) {
   const url = SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/' + path;

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IT Self-Service Portal</title>
+<title>ServiceNow — IT Self-Service Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script>
   const SUPABASE_URL   = "https://jzdrhpvcgndpttjzaaiz.supabase.co";
@@ -13,86 +13,75 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --purple:#6B2FFA;--purple-d:#5a26d4;--purple-l:#ede8fd;
+  --sn-purple:#6e3cbf;--sn-purple-d:#5a2fa0;--sn-purple-l:#f0eafa;
+  --sn-header:#1a1a2e;
   --gold:#b45309;--gold-l:#fef3c7;--gold-b:#fcd34d;
-  --bg:#f0f2f5;--surface:#fff;
+  --bg:#f2f4f7;--surface:#fff;
   --border:#d1d5db;--border-l:#e5e7eb;
-  --text:#1f2937;--muted:#6b7280;--light:#9ca3af;
-  --green:#059669;--yellow:#d97706;--red:#dc2626;--blue:#0284c7;
-  --sh:0 1px 3px rgba(0,0,0,.08);--sh2:0 4px 12px rgba(0,0,0,.1);
-  --r:4px;--rl:8px;
+  --text:#1a1f36;--muted:#6b7280;--light:#9ca3af;
+  --green:#057a55;--yellow:#d97706;--red:#e02424;--blue:#1c64f2;
+  --sh:0 1px 4px rgba(0,0,0,.07);--sh2:0 4px 16px rgba(0,0,0,.12);
+  --r:4px;--rl:6px;
 }
 body{font-family:'Source Sans 3','Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
 
-/* NAV */
-.nav{background:#1a1a2e;height:42px;display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:200;box-shadow:0 2px 6px rgba(0,0,0,.4)}
-.logo{display:flex;align-items:center;gap:8px;color:#fff;font-weight:700;font-size:15px;margin-right:auto}
-.logo-mark{width:26px;height:26px;background:var(--purple);border-radius:6px;display:grid;place-items:center;font-size:14px}
-.admin-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:4px 14px 4px 10px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
-.admin-chip:hover{background:rgba(255,255,255,.18)}
-.admin-chip.on{background:var(--purple);border-color:var(--purple)}
-.adot{width:7px;height:7px;border-radius:50%;background:#6b7280;flex-shrink:0}
+/* ── NAV (ServiceNow style) ── */
+.nav{background:var(--sn-header);height:48px;display:flex;align-items:center;padding:0 16px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.4);gap:0}
+.logo{display:flex;align-items:center;gap:8px;color:#fff;font-weight:700;font-size:16px;letter-spacing:-.2px;margin-right:24px;user-select:none}
+.logo-mark{width:28px;height:28px;background:var(--sn-purple);border-radius:6px;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.logo span{font-weight:300}
+.nav-divider{width:1px;height:22px;background:rgba(255,255,255,.15);margin:0 12px}
+.nav-subtitle{color:rgba(255,255,255,.5);font-size:13px;font-weight:400}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.admin-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:20px;padding:5px 14px 5px 10px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.admin-chip:hover{background:rgba(255,255,255,.16)}
+.admin-chip.on{background:var(--sn-purple);border-color:var(--sn-purple)}
+.adot{width:7px;height:7px;border-radius:50%;background:#6b7280;flex-shrink:0;transition:background .2s}
 .adot.on{background:#4ade80}
 
-/* HERO */
-.hero{padding:48px 0 52px;position:relative;overflow:hidden}
-.hero-user{background:linear-gradient(135deg,#16213e 0%,#0d1b3e 55%,#1a1040 100%)}
+/* ── HERO (ServiceNow banner style) ── */
+.hero{padding:44px 0 48px;position:relative;overflow:hidden}
+.hero-user{background:linear-gradient(135deg,#16213e 0%,#1a1060 60%,#2d1060 100%)}
 .hero-admin{background:linear-gradient(135deg,#1e1b4b 0%,#312e81 55%,#1e1b4b 100%)}
-.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(107,47,250,.25) 0%,transparent 65%);pointer-events:none}
-.hero-inner{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:0 32px;text-align:center}
-.hero h1{color:#fff;font-size:26px;font-weight:600;margin-bottom:8px;letter-spacing:-.3px}
-.hero p{color:rgba(255,255,255,.55);font-size:15px}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:480px;height:480px;background:radial-gradient(circle,rgba(110,60,191,.3) 0%,transparent 65%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 32px;text-align:center}
+.hero h1{color:#fff;font-size:24px;font-weight:600;margin-bottom:6px;letter-spacing:-.2px}
+.hero p{color:rgba(255,255,255,.5);font-size:14px}
 
-/* MAIN */
-.main{max-width:1000px;margin:0 auto;padding:32px 32px 64px}
+/* ── MAIN ── */
+.main{max-width:1100px;margin:0 auto;padding:28px 32px 64px}
 
-/* ── CATALOG TILES ── */
-.catalog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+/* ── SECTION TITLE ── */
+.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:14px}
 
-.cat-tile{background:var(--surface);border:2px solid var(--border-l);border-radius:14px;padding:28px 20px 24px;cursor:pointer;transition:all .2s;box-shadow:var(--sh);display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;position:relative;overflow:hidden}
-.cat-tile::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s}
-.cat-tile:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
-.cat-tile.active{transform:translateY(-2px)}
+/* ── CATALOG TILES (3 cols) ── */
+.catalog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
 
-/* Scherm tile — blauw */
-.tile-scherm{border-color:#93c5fd}
-.tile-scherm:hover,.tile-scherm.active{border-color:var(--blue);box-shadow:0 8px 24px rgba(2,132,199,.18)}
-.tile-scherm.active::after{background:linear-gradient(135deg,rgba(2,132,199,.05),rgba(14,165,233,.08));opacity:1}
-.tile-scherm .tile-icon{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
-.tile-scherm .tile-label{color:#1e40af}
-.tile-scherm .tile-badge{background:#dbeafe;color:#1d4ed8}
+.cat-tile{background:var(--surface);border:1.5px solid var(--border-l);border-radius:var(--rl);padding:24px 18px 20px;cursor:pointer;transition:all .18s;box-shadow:var(--sh);display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;position:relative;overflow:hidden}
+.cat-tile:hover{border-color:var(--sn-purple);box-shadow:0 6px 20px rgba(110,60,191,.16);transform:translateY(-2px)}
+.cat-tile.active{border-color:var(--sn-purple);background:var(--sn-purple-l);box-shadow:0 6px 20px rgba(110,60,191,.2);transform:translateY(-2px)}
 
-/* Meeting tile — groen */
-.tile-meeting{border-color:#6ee7b7}
-.tile-meeting:hover,.tile-meeting.active{border-color:var(--green);box-shadow:0 8px 24px rgba(5,150,105,.18)}
-.tile-meeting.active::after{background:linear-gradient(135deg,rgba(5,150,105,.05),rgba(16,185,129,.08));opacity:1}
+.tile-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;margin-bottom:2px}
+.tile-scherm  .tile-icon{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
 .tile-meeting .tile-icon{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
-.tile-meeting .tile-label{color:#065f46}
-.tile-meeting .tile-badge{background:#d1fae5;color:#059669}
+.tile-vip     .tile-icon{background:linear-gradient(135deg,#fef9c3,#fde68a)}
 
-/* VIP tile — goud */
-.tile-vip{border-color:var(--gold-b)}
-.tile-vip:hover,.tile-vip.active{border-color:var(--gold);box-shadow:0 8px 24px rgba(180,83,9,.18)}
-.tile-vip.active::after{background:linear-gradient(135deg,rgba(251,191,36,.06),rgba(245,158,11,.1));opacity:1}
-.tile-vip .tile-icon{background:linear-gradient(135deg,#fef9c3,#fde68a)}
-.tile-vip .tile-label{color:#92400e}
-.tile-vip .tile-badge{background:var(--gold-l);color:var(--gold)}
+.tile-label{font-size:14px;font-weight:700;color:var(--text);line-height:1.3}
+.tile-desc{font-size:12px;color:var(--muted);line-height:1.5}
 
-.tile-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;position:relative;z-index:1;flex-shrink:0}
-.tile-label{font-size:15px;font-weight:700;position:relative;z-index:1;line-height:1.3}
-.tile-desc{font-size:12px;color:var(--muted);position:relative;z-index:1;line-height:1.5}
-.tile-badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;letter-spacing:.3px;text-transform:uppercase}
-.cat-tile.active .tile-label::after{content:' ✓';opacity:.5}
+.tile-badge{position:absolute;top:10px;right:10px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.4px;text-transform:uppercase}
+.tile-scherm  .tile-badge{background:#dbeafe;color:#1d4ed8}
+.tile-meeting .tile-badge{background:#d1fae5;color:#065f46}
+.tile-vip     .tile-badge{background:var(--gold-l);color:var(--gold)}
 
 /* ── CARD ── */
 .card{background:var(--surface);border:1px solid var(--border-l);border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden}
-.card-head{padding:14px 20px;border-bottom:1px solid var(--border-l);display:flex;align-items:center;gap:10px}
-.card-head-icon{width:30px;height:30px;border-radius:6px;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.card-head{padding:13px 20px;border-bottom:1px solid var(--border-l);display:flex;align-items:center;gap:10px}
+.card-head-icon{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font-size:14px;flex-shrink:0}
 .card-title{font-size:14px;font-weight:600}
 .card-sub{font-size:12px;color:var(--muted);margin-top:1px}
-.card-body{padding:24px}
+.card-body{padding:22px}
 
-/* card accent per type */
 .card-scherm  .card-head{background:linear-gradient(90deg,#eff6ff,#fff);border-bottom-color:#bfdbfe}
 .card-scherm  .card-head-icon{background:#dbeafe}
 .card-meeting .card-head{background:linear-gradient(90deg,#f0fdf4,#fff);border-bottom-color:#a7f3d0}
@@ -105,112 +94,114 @@ body{font-family:'Source Sans 3','Segoe UI',sans-serif;background:var(--bg);colo
 .frow.three{grid-template-columns:1fr 1fr 1fr}
 .frow.full{grid-template-columns:1fr}
 .fg{display:flex;flex-direction:column;gap:4px}
-.flabel{font-size:13px;font-weight:600}
+.flabel{font-size:13px;font-weight:600;color:var(--text)}
 .req{color:var(--red);margin-left:2px}
-.finput,.fsel,.ftextarea{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;appearance:none}
-.finput:focus,.fsel:focus,.ftextarea:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(107,47,250,.1)}
-.fsel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px;cursor:pointer}
+.finput,.fsel,.ftextarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;appearance:none}
+.finput:focus,.fsel:focus,.ftextarea:focus{border-color:var(--sn-purple);box-shadow:0 0 0 3px rgba(110,60,191,.12)}
+.fsel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer}
 .ftextarea{resize:vertical;min-height:96px;line-height:1.6}
 .fhint{font-size:11px;color:var(--muted);margin-top:2px}
-.divider{border:none;border-top:1px solid var(--border-l);margin:20px 0}
-.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px;display:block}
-.loc-box{background:#f8fafc;border:1px solid var(--border-l);border-radius:var(--r);padding:16px;margin-bottom:14px}
-.loc-box .section-label{color:var(--purple);margin-bottom:12px}
+.divider{border:none;border-top:1px solid var(--border-l);margin:18px 0}
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--sn-purple);margin-bottom:10px;display:block}
+.loc-box{background:#fafbfc;border:1px solid var(--border-l);border-left:3px solid var(--sn-purple);border-radius:var(--r);padding:14px 16px;margin-bottom:14px}
+.loc-box .sec-lbl{margin-bottom:10px}
 
-/* PRIORITY */
+/* ── PRIORITY ── */
 .prio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.prio-btn{border:1.5px solid var(--border);background:#fff;border-radius:var(--r);padding:10px 6px;text-align:center;cursor:pointer;transition:all .15s;font-family:inherit}
-.prio-btn:hover{border-color:var(--purple);background:var(--purple-l)}
+.prio-btn{border:1.5px solid var(--border);background:#fff;border-radius:var(--r);padding:9px 6px;text-align:center;cursor:pointer;transition:all .15s;font-family:inherit}
+.prio-btn:hover{border-color:var(--sn-purple);background:var(--sn-purple-l)}
 .prio-btn.low{border-color:var(--green);background:#d1fae5;color:#065f46}
 .prio-btn.med{border-color:var(--yellow);background:#fef3c7;color:#92400e}
 .prio-btn.high{border-color:var(--red);background:#fee2e2;color:#7f1d1d}
-.picon{font-size:17px;display:block;margin-bottom:2px}
-.plabel{font-size:12px;font-weight:600;display:block}
-.pdesc{font-size:11px;color:var(--muted);display:block;margin-top:1px}
+.picon{font-size:16px;display:block;margin-bottom:2px}
+.plabel{font-size:11px;font-weight:700;display:block}
+.pdesc{font-size:10px;color:var(--muted);display:block;margin-top:1px}
 
-/* BUTTONS */
+/* ── BUTTONS ── */
 .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
-.btn{padding:8px 20px;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
-.btn-primary{background:var(--purple);color:#fff}
-.btn-primary:hover{background:var(--purple-d)}
+.btn{padding:8px 18px;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--sn-purple);color:#fff}
+.btn-primary:hover{background:var(--sn-purple-d)}
 .btn-primary:disabled{opacity:.6;cursor:not-allowed}
 .btn-scherm{background:var(--blue);color:#fff}
-.btn-scherm:hover{background:#0369a1}
+.btn-scherm:hover{background:#1a56db}
 .btn-meeting{background:var(--green);color:#fff}
-.btn-meeting:hover{background:#047857}
+.btn-meeting:hover{background:#046c4e}
 .btn-vip{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
 .btn-vip:hover{background:linear-gradient(135deg,#d97706,#b45309)}
 .btn-outline{background:#fff;color:var(--text);border:1px solid var(--border)}
 .btn-outline:hover{background:var(--bg)}
-.btn-sm{padding:5px 12px;font-size:12px}
+.btn-sm{padding:5px 11px;font-size:12px}
 .btn-danger{background:#fee2e2;color:var(--red);border:1px solid #fecaca}
 .btn-danger:hover{background:#fecaca}
 
-/* SUCCESS */
+/* ── SUCCESS ── */
 .success-wrap{text-align:center;padding:40px 24px}
-.success-ico{font-size:56px;display:block;margin-bottom:16px;animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
+.success-ico{font-size:52px;display:block;margin-bottom:14px;animation:pop .4s cubic-bezier(.34,1.56,.64,1)}
 @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
-.success-ref{display:inline-block;font-weight:700;border-radius:var(--r);padding:8px 20px;font-size:15px;letter-spacing:.5px;margin:12px 0 20px}
+.success-ref{display:inline-block;font-weight:700;border-radius:var(--r);padding:8px 20px;font-size:15px;letter-spacing:.5px;margin:10px 0 18px}
 .ref-scherm{background:#dbeafe;color:#1d4ed8}
 .ref-meeting{background:#d1fae5;color:#065f46}
 .ref-vip{background:var(--gold-l);color:var(--gold)}
 
-/* EMPTY STATE */
-.select-prompt{text-align:center;padding:60px 24px;color:var(--muted)}
-.select-prompt .big{font-size:48px;margin-bottom:16px;display:block;opacity:.35}
+/* ── EMPTY PROMPT ── */
+.select-prompt{text-align:center;padding:56px 24px;color:var(--muted)}
+.select-prompt .big{font-size:44px;margin-bottom:14px;display:block;opacity:.3}
 
-/* ADMIN */
-.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
-.stat-card{background:var(--surface);border:1px solid var(--border-l);border-radius:var(--rl);padding:18px 16px;box-shadow:var(--sh);text-align:center}
-.stat-n{font-size:28px;font-weight:700;line-height:1;margin-bottom:4px}
-.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.c-purple{color:var(--purple)}.c-blue{color:var(--blue)}.c-yellow{color:var(--yellow)}.c-green{color:var(--green)}.c-red{color:var(--red)}
+/* ── ADMIN STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px}
+.stat-card{background:var(--surface);border:1px solid var(--border-l);border-radius:var(--rl);padding:16px;box-shadow:var(--sh);text-align:center}
+.stat-n{font-size:26px;font-weight:700;line-height:1;margin-bottom:4px}
+.stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.c-purple{color:var(--sn-purple)}.c-blue{color:var(--blue)}.c-yellow{color:var(--yellow)}.c-green{color:var(--green)}.c-red{color:var(--red)}
 
-.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.fbtn{border:1px solid var(--border);background:#fff;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
-.fbtn:hover{border-color:var(--purple);color:var(--purple)}
-.fbtn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
-.srch-wrap{position:relative;max-width:260px;flex:1}
-.srch{width:100%;padding:7px 11px 7px 32px;border:1px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;outline:none}
-.srch:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(107,47,250,.1)}
-.srch-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
+/* ── FILTERS ── */
+.filter-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.fbtn{border:1px solid var(--border);background:#fff;border-radius:20px;padding:4px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.fbtn:hover{border-color:var(--sn-purple);color:var(--sn-purple)}
+.fbtn.active{background:var(--sn-purple);color:#fff;border-color:var(--sn-purple)}
+.srch-wrap{position:relative;max-width:240px;flex:1}
+.srch{width:100%;padding:6px 10px 6px 30px;border:1px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;outline:none}
+.srch:focus{border-color:var(--sn-purple);box-shadow:0 0 0 3px rgba(110,60,191,.1)}
+.srch-ico{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
 
+/* ── TABLE ── */
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-thead th{background:#f9fafb;padding:10px 14px;text-align:left;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border-l);white-space:nowrap}
-tbody td{padding:11px 14px;border-bottom:1px solid var(--border-l);font-size:13px;vertical-align:middle}
+thead th{background:#f9fafb;padding:10px 13px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border-l);white-space:nowrap}
+tbody td{padding:10px 13px;border-bottom:1px solid var(--border-l);font-size:13px;vertical-align:middle}
 tbody tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:#f9fafb}
-.pchip{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
+tbody tr:hover td{background:#fafbfc}
+.pchip{display:inline-flex;font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px}
 .pchip.Laag{background:#d1fae5;color:#065f46}
 .pchip.Gemiddeld{background:#fef3c7;color:#92400e}
 .pchip.Hoog{background:#fee2e2;color:#7f1d1d}
 .ssel{border:1px solid var(--border);border-radius:var(--r);padding:4px 8px;font-family:inherit;font-size:12px;background:#fff;cursor:pointer;outline:none}
-.ssel:focus{border-color:var(--purple)}
-.badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
-.tbadge-scherm{background:#dbeafe;color:#1d4ed8;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
-.tbadge-meeting{background:#d1fae5;color:#065f46;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
-.tbadge-vip{background:var(--gold-l);color:var(--gold);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.ssel:focus{border-color:var(--sn-purple)}
+.badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+.tbadge-scherm{background:#dbeafe;color:#1d4ed8;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.tbadge-meeting{background:#d1fae5;color:#065f46;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.tbadge-vip{background:var(--gold-l);color:var(--gold);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap}
 
-/* MODAL */
+/* ── MODAL ── */
 .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
-.modal{background:#fff;border-radius:var(--rl);box-shadow:0 20px 60px rgba(0,0,0,.25);width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
-.mhead{padding:16px 24px;border-bottom:1px solid var(--border-l);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff}
+.modal{background:#fff;border-radius:var(--rl);box-shadow:0 20px 60px rgba(0,0,0,.25);width:100%;max-width:540px;max-height:90vh;overflow-y:auto}
+.mhead{padding:14px 22px;border-bottom:1px solid var(--border-l);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff}
 .mtitle{font-size:15px;font-weight:700}
 .mclose{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);line-height:1}
-.mbody{padding:24px}
+.mbody{padding:22px}
 .drow{display:flex;gap:8px;margin-bottom:10px;font-size:13px}
 .dlbl{font-weight:600;min-width:130px;color:var(--muted);flex-shrink:0}
 
-/* LOGIN */
+/* ── LOGIN ── */
 .login-box{background:#fff;border-radius:var(--rl);box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:360px;padding:32px;text-align:center}
 .login-box h2{font-size:18px;font-weight:700;margin-bottom:6px}
 .login-box p{font-size:13px;color:var(--muted);margin-bottom:20px}
 .lerr{background:#fee2e2;color:#7f1d1d;border-radius:var(--r);padding:8px 12px;font-size:13px;margin-top:10px;display:none}
 
-/* TOAST */
+/* ── TOAST ── */
 .toast-wrap{position:fixed;bottom:24px;right:24px;z-index:999;pointer-events:none}
-.toast{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:13px 16px;box-shadow:var(--sh2);display:flex;align-items:flex-start;gap:10px;min-width:280px;max-width:340px;transform:translateX(120%);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:all}
+.toast{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:12px 15px;box-shadow:var(--sh2);display:flex;align-items:flex-start;gap:10px;min-width:270px;max-width:330px;transform:translateX(120%);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:all}
 .toast.show{transform:translateX(0);opacity:1}
 .toast.success{border-left:4px solid var(--green)}
 .toast.info{border-left:4px solid var(--blue)}
@@ -218,15 +209,15 @@ tbody tr:hover td{background:#f9fafb}
 .toast-body{flex:1}.tt{font-size:13px;font-weight:600;margin-bottom:2px}.tdesc{font-size:12px;color:var(--muted)}
 .tx{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px}
 
-.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(107,47,250,.2);border-top-color:var(--purple);border-radius:50%;animation:spin .7s linear infinite}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(110,60,191,.2);border-top-color:var(--sn-purple);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading{display:flex;align-items:center;justify-content:center;padding:40px;gap:12px;color:var(--muted)}
 .empty{text-align:center;padding:48px 20px;color:var(--muted)}
-.empty .big{font-size:40px;margin-bottom:10px}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.empty .big{font-size:38px;margin-bottom:10px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 @media(max-width:700px){
-  .main{padding:20px 16px 48px}.hero-inner{padding:0 16px}
+  .main{padding:18px 14px 48px}.hero-inner{padding:0 14px}
   .catalog-grid{grid-template-columns:1fr}
   .frow,.frow.three{grid-template-columns:1fr}
   .prio-grid{grid-template-columns:1fr}
@@ -240,52 +231,50 @@ tbody tr:hover td{background:#f9fafb}
 <header class="nav">
   <div class="logo">
     <div class="logo-mark">⚡</div>
-    Now<span style="font-weight:300">Service</span>
+    Service<span>Now</span>
   </div>
-  <button class="admin-chip" id="adminChip" onclick="handleAdminClick()">
-    <span class="adot" id="adot"></span>
-    <span id="chipLabel">Beheerderslogin</span>
-  </button>
+  <div class="nav-divider"></div>
+  <span class="nav-subtitle">IT Self-Service Portal</span>
+  <div class="nav-right">
+    <button class="admin-chip" id="adminChip" onclick="handleAdminClick()">
+      <span class="adot" id="adot"></span>
+      <span id="chipLabel">Beheerderslogin</span>
+    </button>
+  </div>
 </header>
 
 <!-- ══════════ GEBRUIKER ══════════ -->
 <div id="viewUser">
   <section class="hero hero-user">
     <div class="hero-inner">
-      <h1>IT Self-Service Portaal</h1>
-      <p>Selecteer een categorie om een verzoek in te dienen.</p>
+      <h1>Welkom in het IT Self-Service Portal</h1>
+      <p>Selecteer een categorie hieronder om een verzoek in te dienen.</p>
     </div>
   </section>
   <main class="main">
-    <div style="font-size:17px;font-weight:600;margin-bottom:16px">Servicecatalogus</div>
+    <div class="section-title">Servicecatalogus</div>
 
-    <!-- 3 TILES -->
     <div class="catalog-grid">
-
       <div class="cat-tile tile-scherm" id="tile-scherm" onclick="selectType('scherm')">
         <span class="tile-badge">Incident</span>
         <div class="tile-icon">🖥️</div>
         <div class="tile-label">Schermproblemen</div>
-        <div class="tile-desc">Scherm doet het niet, geen beeld, flikkert of verkeerde resolutie.</div>
+        <div class="tile-desc">Geen beeld, flikkert of verkeerde resolutie.</div>
       </div>
-
       <div class="cat-tile tile-meeting" id="tile-meeting" onclick="selectType('meeting')">
         <span class="tile-badge">Incident</span>
         <div class="tile-icon">📅</div>
         <div class="tile-label">Meetingroom problemen</div>
-        <div class="tile-desc">Beamer, audio, videoconferentie of andere vergaderkamerproblemen.</div>
+        <div class="tile-desc">Beamer, audio, Teams of vergaderkamerproblemen.</div>
       </div>
-
       <div class="cat-tile tile-vip" id="tile-vip" onclick="selectType('vip')">
         <span class="tile-badge">Service Request</span>
         <div class="tile-icon">⭐</div>
         <div class="tile-label">VIP Request</div>
-        <div class="tile-desc">IT-ondersteuning voor een VIP-gast of bezoeker op locatie.</div>
+        <div class="tile-desc">IT-ondersteuning voor een VIP-gast op locatie.</div>
       </div>
-
     </div>
 
-    <!-- FORM AREA -->
     <div id="formArea">
       <div class="select-prompt">
         <span class="big">☝️</span>
@@ -311,15 +300,14 @@ tbody tr:hover td{background:#f9fafb}
       <div class="stat-card"><div class="stat-n c-red" id="s-bezig">–</div><div class="stat-l">In behandeling</div></div>
       <div class="stat-card"><div class="stat-n c-green" id="s-opgelost">–</div><div class="stat-l">Opgelost</div></div>
     </div>
-
     <div class="filter-bar">
-      <span style="font-size:13px;font-weight:600;color:var(--muted)">Type:</span>
-      <button class="fbtn active" data-f="Alle" data-kind="type" onclick="setFilter(this)">Alle</button>
-      <button class="fbtn" data-f="scherm"  data-kind="type" onclick="setFilter(this)">🖥️ Schermproblemen</button>
-      <button class="fbtn" data-f="meeting" data-kind="type" onclick="setFilter(this)">📅 Meetingroom</button>
-      <button class="fbtn" data-f="vip"     data-kind="type" onclick="setFilter(this)">⭐ VIP Request</button>
-      <span style="font-size:13px;font-weight:600;color:var(--muted);margin-left:4px">Status:</span>
-      <button class="fbtn active" data-f="Alle" data-kind="status" onclick="setFilter(this)">Alle</button>
+      <span style="font-size:12px;font-weight:700;color:var(--muted)">Type:</span>
+      <button class="fbtn active" data-f="Alle"    data-kind="type" onclick="setFilter(this)">Alle</button>
+      <button class="fbtn" data-f="scherm"  data-kind="type" onclick="setFilter(this)">🖥️ Scherm</button>
+      <button class="fbtn" data-f="meeting" data-kind="type" onclick="setFilter(this)">📅 Meeting</button>
+      <button class="fbtn" data-f="vip"     data-kind="type" onclick="setFilter(this)">⭐ VIP</button>
+      <span style="font-size:12px;font-weight:700;color:var(--muted);margin-left:4px">Status:</span>
+      <button class="fbtn active" data-f="Alle"           data-kind="status" onclick="setFilter(this)">Alle</button>
       <button class="fbtn" data-f="Nieuw"          data-kind="status" onclick="setFilter(this)">Nieuw</button>
       <button class="fbtn" data-f="Open"           data-kind="status" onclick="setFilter(this)">Open</button>
       <button class="fbtn" data-f="In behandeling" data-kind="status" onclick="setFilter(this)">In behandeling</button>
@@ -329,16 +317,11 @@ tbody tr:hover td{background:#f9fafb}
         <button class="btn btn-outline btn-sm" onclick="loadRequests()">🔄</button>
       </div>
     </div>
-
     <div class="card">
       <div class="tbl-wrap">
         <table>
           <thead>
-            <tr>
-              <th>#</th><th>Type</th><th>Onderwerp</th><th>Naam</th>
-              <th>Kamer / Ruimte</th><th>Etage</th><th>Plek</th>
-              <th>Prioriteit</th><th>Status</th><th>Ingediend</th><th>Acties</th>
-            </tr>
+            <tr><th>#</th><th>Type</th><th>Onderwerp</th><th>Naam</th><th>Kamer</th><th>Etage</th><th>Plek</th><th>Prioriteit</th><th>Status</th><th>Ingediend</th><th>Acties</th></tr>
           </thead>
           <tbody id="tBody">
             <tr><td colspan="11"><div class="loading"><div class="spinner"></div>&nbsp;Laden...</div></td></tr>
@@ -352,7 +335,7 @@ tbody tr:hover td{background:#f9fafb}
 <!-- LOGIN MODAL -->
 <div class="backdrop" id="loginModal" style="display:none">
   <div class="login-box">
-    <div style="font-size:40px;margin-bottom:12px">🔐</div>
+    <div style="font-size:38px;margin-bottom:12px">🔐</div>
     <h2>Beheerderstoegang</h2>
     <p>Voer het beheerderswachtwoord in om door te gaan.</p>
     <input class="finput" type="password" id="lpw" placeholder="Wachtwoord" onkeydown="if(event.key==='Enter')doLogin()">
@@ -367,10 +350,7 @@ tbody tr:hover td{background:#f9fafb}
 <!-- DETAIL MODAL -->
 <div class="backdrop" id="detailModal" style="display:none" onclick="if(event.target===this)this.style.display='none'">
   <div class="modal" onclick="event.stopPropagation()">
-    <div class="mhead">
-      <div class="mtitle" id="mtitle">Details</div>
-      <button class="mclose" onclick="$('detailModal').style.display='none'">✕</button>
-    </div>
+    <div class="mhead"><div class="mtitle" id="mtitle">Details</div><button class="mclose" onclick="$('detailModal').style.display='none'">✕</button></div>
     <div class="mbody" id="mbody"></div>
   </div>
 </div>
@@ -378,7 +358,7 @@ tbody tr:hover td{background:#f9fafb}
 <!-- TOAST -->
 <div class="toast-wrap">
   <div class="toast" id="toast">
-    <div style="font-size:18px;flex-shrink:0" id="tico">✅</div>
+    <div style="font-size:17px;flex-shrink:0" id="tico">✅</div>
     <div class="toast-body"><div class="tt" id="tt"></div><div class="tdesc" id="tdesc"></div></div>
     <button class="tx" onclick="hideToast()">✕</button>
   </div>
@@ -393,8 +373,7 @@ async function dbFetch(path, opts={}) {
   const res = await fetch(url, {
     ...opts,
     headers: {
-      'apikey': SUPABASE_ANON,
-      'Authorization': 'Bearer ' + SUPABASE_ANON,
+      'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON,
       'Content-Type': 'application/json',
       'Prefer': opts.prefer ?? 'return=representation',
       ...(opts.headers||{})
@@ -414,97 +393,55 @@ let all=[], filterType='Alle', filterStatus='Alle', isAdmin=false, currentType=n
 // ── HELPERS ───────────────────────────────────────────
 const BS={'Nieuw':'background:#ede8fd;color:#5b21b6','Open':'background:#dbeafe;color:#1d4ed8','In behandeling':'background:#fef3c7;color:#b45309','Opgelost':'background:#d1fae5;color:#065f46','Gesloten':'background:#f3f4f6;color:#374151'};
 const badge = s => `<span class="badge" style="${BS[s]||BS['Nieuw']}">${s}</span>`;
-const TYPE_LABELS = {scherm:'🖥️ Schermproblemen', meeting:'📅 Meetingroom', vip:'⭐ VIP Request'};
-const typeBadge = t => ({
-  scherm:  '<span class="tbadge-scherm">🖥️ Scherm</span>',
-  meeting: '<span class="tbadge-meeting">📅 Meeting</span>',
-  vip:     '<span class="tbadge-vip">⭐ VIP</span>',
-}[t] || t);
-
-function ago(ts){const m=Math.floor((Date.now()-new Date(ts))/60000);if(m<1)return'Zojuist';if(m<60)return m+' min geleden';const h=Math.floor(m/60);if(h<24)return h+' uur geleden';return Math.floor(h/24)+' dag(en) geleden';}
+const typeBadge = t => ({scherm:'<span class="tbadge-scherm">🖥️ Scherm</span>',meeting:'<span class="tbadge-meeting">📅 Meeting</span>',vip:'<span class="tbadge-vip">⭐ VIP</span>'}[t]||t);
+function ago(ts){const m=Math.floor((Date.now()-new Date(ts))/60000);if(m<1)return'Zojuist';if(m<60)return m+' min';const h=Math.floor(m/60);if(h<24)return h+' uur';return Math.floor(h/24)+' dag(en)';}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 // ── TYPE CONFIG ───────────────────────────────────────
 const TYPES = {
-  scherm: {
-    icon:'🖥️', label:'Schermproblemen', btnClass:'btn-scherm',
-    refPrefix:'SCH', cardClass:'card-scherm', refClass:'ref-scherm',
-    onderwerp_placeholder:'bv. Scherm geeft geen beeld',
-    omschrijving_placeholder:'Beschrijf het probleem. Welk type scherm? Wanneer begon het? Zijn er foutmeldingen?',
-    prio_high_label:'Kritiek', prio_high_desc:'Kan niet werken',
-    extra_fields: `
-      <div class="fg"><label class="flabel">Type scherm</label>
-        <select class="fsel" id="f-extra">
-          <option value="">-- Selecteer --</option>
-          <option>Monitor (bureau)</option><option>Laptop scherm</option>
-          
-        </select>
-      </div>`
+  scherm:{
+    icon:'🖥️',label:'Schermproblemen',btnClass:'btn-scherm',refPrefix:'SCH',cardClass:'card-scherm',refClass:'ref-scherm',
+    onderwerp_ph:'bv. Scherm geeft geen beeld',omschrijving_ph:'Beschrijf het probleem. Welk type scherm? Wanneer begon het?',
+    prio_high:'Kritiek',prio_high_desc:'Kan niet werken',
+    extra:`<option value="">-- Selecteer --</option><option>Monitor (bureau)</option><option>Laptop scherm</option>`
   },
-  meeting: {
-    icon:'📅', label:'Meetingroom problemen', btnClass:'btn-meeting',
-    refPrefix:'MTG', cardClass:'card-meeting', refClass:'ref-meeting',
-    onderwerp_placeholder:'bv. Beamer werkt niet in vergaderzaal 3',
-    omschrijving_placeholder:'Beschrijf het probleem. Welke apparatuur doet het niet? Is er een vergadering gepland?',
-    prio_high_label:'Kritiek', prio_high_desc:'Meeting loopt nu',
-    extra_fields: `
-      <div class="fg"><label class="flabel">Type probleem</label>
-        <select class="fsel" id="f-extra">
-          <option value="">-- Selecteer --</option>
-          <option>Beamer / Projector</option><option>Audio / Microfoon</option>
-          <option>Videoconferentie (Teams)</option><option>HDMI / Kabelverbinding</option>
-          <option>Wifi in vergaderkamer</option><option>Overig</option>
-        </select>
-      </div>`
+  meeting:{
+    icon:'📅',label:'Meetingroom problemen',btnClass:'btn-meeting',refPrefix:'MTG',cardClass:'card-meeting',refClass:'ref-meeting',
+    onderwerp_ph:'bv. Beamer werkt niet in vergaderzaal 3',omschrijving_ph:'Welke apparatuur? Is er een vergadering gepland?',
+    prio_high:'Kritiek',prio_high_desc:'Meeting loopt nu',
+    extra:`<option value="">-- Selecteer --</option><option>Beamer / Projector</option><option>Audio / Microfoon</option><option>Videoconferentie (Teams)</option><option>HDMI / Kabelverbinding</option><option>Wifi in vergaderkamer</option><option>Overig</option>`
   },
-  vip: {
-    icon:'⭐', label:'VIP Request', btnClass:'btn-vip',
-    refPrefix:'VIP', cardClass:'card-vip', refClass:'ref-vip',
-    onderwerp_placeholder:'bv. Laptop instellen voor VIP-gast',
-    omschrijving_placeholder:'Beschrijf het verzoek zo gedetailleerd mogelijk. Wat heeft de gast nodig?',
-    prio_high_label:'Hoog', prio_high_desc:'Gast wacht nu',
-    extra_fields: `
-      <div class="fg"><label class="flabel">Type verzoek</label>
-        <select class="fsel" id="f-extra">
-          <option value="">-- Selecteer --</option>
-          <option>Laptop / Device instellen</option><option>Wifi toegang</option>
-          <option>Presentatie ondersteuning</option><option>Printer toegang</option><option>Overig</option>
-        </select>
-      </div>`
+  vip:{
+    icon:'⭐',label:'VIP Request',btnClass:'btn-vip',refPrefix:'VIP',cardClass:'card-vip',refClass:'ref-vip',
+    onderwerp_ph:'bv. Laptop instellen voor VIP-gast',omschrijving_ph:'Wat heeft de gast nodig?',
+    prio_high:'Hoog',prio_high_desc:'Gast wacht nu',
+    extra:`<option value="">-- Selecteer --</option><option>Laptop / Device instellen</option><option>Wifi toegang</option><option>Presentatie ondersteuning</option><option>Printer toegang</option><option>Overig</option>`
   }
 };
 
-// ── SELECT TYPE & RENDER FORM ─────────────────────────
-function selectType(type) {
-  currentType = type;
-  selectedPrio = 'Laag';
+// ── SELECT TYPE ───────────────────────────────────────
+function selectType(type){
+  currentType=type; selectedPrio='Laag';
   document.querySelectorAll('.cat-tile').forEach(t=>t.classList.remove('active'));
   $('tile-'+type).classList.add('active');
-
-  const T = TYPES[type];
-  const isVip = type === 'vip';
-
-  $('formArea').innerHTML = `
-    <div class="card ${T.cardClass}" style="animation:fadeIn .25s ease">
+  const T=TYPES[type];
+  $('formArea').innerHTML=`
+    <div class="card ${T.cardClass}" style="animation:fadeIn .22s ease">
       <div class="card-head">
         <div class="card-head-icon">${T.icon}</div>
         <div><div class="card-title">${T.label}</div><div class="card-sub">Velden met * zijn verplicht</div></div>
       </div>
       <div class="card-body">
         <form id="reqForm" onsubmit="submitReq(event)">
-
-          <!-- Contactgegevens -->
-          <span class="section-label">${isVip ? 'Ingediend door' : 'Gemeld door'}</span>
+          <span class="sec-lbl">Gemeld door</span>
           <div class="frow full">
             <div class="fg"><label class="flabel">Naam <span class="req">*</span></label><input class="finput" id="f-naam" type="text" placeholder="Jan de Vries" required></div>
           </div>
           <hr class="divider">
-
-          <!-- Locatie -->
           <div class="loc-box">
-            <span class="section-label">📍 Locatie</span>
+            <span class="sec-lbl">📍 Locatie</span>
             <div class="frow three">
-              <div class="fg"><label class="flabel">${isVip?'Kamernummer':'Ruimte / Kamer'} <span class="req">*</span></label><input class="finput" id="f-kamer" type="text" placeholder="${isVip?'bv. 204':'bv. Vergaderzaal 3'}" required></div>
+              <div class="fg"><label class="flabel">${type==='vip'?'Kamernummer':'Ruimte / Kamer'} <span class="req">*</span></label><input class="finput" id="f-kamer" type="text" placeholder="${type==='vip'?'bv. 204':'bv. Zaal 3'}" required></div>
               <div class="fg"><label class="flabel">Etage <span class="req">*</span></label>
                 <select class="fsel" id="f-etage" required>
                   <option value="">-- Selecteer --</option>
@@ -512,41 +449,29 @@ function selectType(type) {
                   <option>4e etage</option><option>5e etage</option><option>6e etage</option>
                 </select>
               </div>
-              <div class="fg"><label class="flabel">Plek / Zone</label><input class="finput" id="f-plek" type="text" placeholder="bv. Vleugel A, Balie"></div>
+              <div class="fg"><label class="flabel">Plek / Zone</label><input class="finput" id="f-plek" type="text" placeholder="bv. Vleugel A"></div>
             </div>
           </div>
-
           <hr class="divider">
-
-          <!-- Verzoek details -->
-          <span class="section-label">Details</span>
-          <div class="frow">
-            <div class="fg" style="grid-column:1/-1"><label class="flabel">Onderwerp <span class="req">*</span></label><input class="finput" id="f-onderwerp" type="text" placeholder="${T.onderwerp_placeholder}" required></div>
-          </div>
-          <div class="frow" style="margin-bottom:14px">
-            ${T.extra_fields}
-          </div>
-          <div class="frow full">
-            <div class="fg"><label class="flabel">Omschrijving</label><textarea class="ftextarea" id="f-omschrijving" placeholder="${T.omschrijving_placeholder}"></textarea></div>
-          </div>
-
+          <span class="sec-lbl">Details</span>
+          <div class="frow full"><div class="fg"><label class="flabel">Onderwerp <span class="req">*</span></label><input class="finput" id="f-onderwerp" type="text" placeholder="${T.onderwerp_ph}" required></div></div>
+          <div class="frow full"><div class="fg"><label class="flabel">Type</label><select class="fsel" id="f-extra">${T.extra}</select></div></div>
+          <div class="frow full"><div class="fg"><label class="flabel">Omschrijving</label><textarea class="ftextarea" id="f-omschrijving" placeholder="${T.omschrijving_ph}"></textarea></div></div>
           <hr class="divider">
-
           <div class="frow">
             <div class="fg"><label class="flabel">Prioriteit</label>
               <div class="prio-grid">
                 <button type="button" class="prio-btn low" data-p="Laag" onclick="setPrio(this)"><span class="picon">🟢</span><span class="plabel">Laag</span><span class="pdesc">Niet urgent</span></button>
                 <button type="button" class="prio-btn" data-p="Gemiddeld" onclick="setPrio(this)"><span class="picon">🟡</span><span class="plabel">Gemiddeld</span><span class="pdesc">Zo snel mogelijk</span></button>
-                <button type="button" class="prio-btn" data-p="Hoog" onclick="setPrio(this)"><span class="picon">🔴</span><span class="plabel">${T.prio_high_label}</span><span class="pdesc">${T.prio_high_desc}</span></button>
+                <button type="button" class="prio-btn" data-p="Hoog" onclick="setPrio(this)"><span class="picon">🔴</span><span class="plabel">${T.prio_high}</span><span class="pdesc">${T.prio_high_desc}</span></button>
               </div>
             </div>
-            <div class="fg"><label class="flabel">${isVip?'Gewenste tijd':'Gemeld om'}</label><input class="finput" id="f-datum" type="datetime-local"><div class="fhint">Optioneel</div></div>
+            <div class="fg"><label class="flabel">${type==='vip'?'Gewenste tijd':'Gemeld om'}</label><input class="finput" id="f-datum" type="datetime-local"><div class="fhint">Optioneel</div></div>
           </div>
-
           <hr class="divider">
           <div class="actions">
             <button type="button" class="btn btn-outline" onclick="clearForm()">Wissen</button>
-            <button type="submit" class="btn ${T.btnClass}" id="submitBtn">${T.icon}&nbsp; ${T.label} indienen</button>
+            <button type="submit" class="btn ${T.btnClass}" id="submitBtn">${T.icon}&nbsp; Indienen</button>
           </div>
         </form>
       </div>
@@ -556,76 +481,54 @@ function selectType(type) {
 function setPrio(el){
   document.querySelectorAll('.prio-btn').forEach(b=>b.classList.remove('low','med','high'));
   selectedPrio=el.dataset.p;
-  if(selectedPrio==='Laag')el.classList.add('low');
-  else if(selectedPrio==='Gemiddeld')el.classList.add('med');
-  else el.classList.add('high');
+  el.classList.add(selectedPrio==='Laag'?'low':selectedPrio==='Gemiddeld'?'med':'high');
 }
-
-function clearForm(){
-  document.getElementById('reqForm')?.reset();
-  document.querySelectorAll('.prio-btn').forEach(b=>b.classList.remove('low','med','high'));
-  document.querySelector('[data-p="Laag"]')?.classList.add('low');
-  selectedPrio='Laag';
-}
+function clearForm(){document.getElementById('reqForm')?.reset();document.querySelectorAll('.prio-btn').forEach(b=>b.classList.remove('low','med','high'));document.querySelector('[data-p="Laag"]')?.classList.add('low');selectedPrio='Laag';}
 
 // ── SUBMIT ────────────────────────────────────────────
 async function submitReq(e){
   e.preventDefault();
-  const T = TYPES[currentType];
+  const T=TYPES[currentType];
   const btn=$('submitBtn');
   btn.disabled=true; btn.innerHTML='<div class="spinner"></div>&nbsp;Bezig...';
   try{
     const res=await insert({
-      naam:         $('f-naam').value.trim(),
-      email:        '',
-      afdeling:     $('f-afdeling')?.value||'',
-      categorie:    currentType,
-      onderwerp:    $('f-onderwerp').value.trim(),
-      omschrijving: $('f-omschrijving')?.value?.trim()||'',
-      prioriteit:   selectedPrio,
-      datum:        $('f-datum')?.value||null,
-      status:       'Nieuw',
-      kamer:        $('f-kamer')?.value?.trim()||'',
-      etage:        $('f-etage')?.value||'',
-      plek:         $('f-plek')?.value?.trim()||'',
+      naam:$('f-naam').value.trim(), email:'',
+      afdeling:'', categorie:currentType,
+      onderwerp:$('f-onderwerp').value.trim(),
+      omschrijving:$('f-omschrijving')?.value?.trim()||'',
+      prioriteit:selectedPrio, datum:$('f-datum')?.value||null,
+      status:'Nieuw',
+      kamer:$('f-kamer')?.value?.trim()||'',
+      etage:$('f-etage')?.value||'',
+      plek:$('f-plek')?.value?.trim()||'',
     });
-    const id = res?.[0]?.id;
-    const ref = id ? T.refPrefix+'-'+String(id).slice(-6) : T.refPrefix+'-???';
-    showSuccess(ref, $('f-naam').value.trim().split(' ')[0], currentType);
+    const ref=res?.[0]?.id?T.refPrefix+'-'+String(res[0].id).slice(-6):T.refPrefix+'-???';
+    $('formArea').innerHTML=`
+      <div class="card" style="animation:fadeIn .22s ease"><div class="card-body">
+        <div class="success-wrap">
+          <span class="success-ico">${T.icon}</span>
+          <h2 style="font-size:19px;font-weight:700;margin-bottom:8px">Verzoek ingediend!</h2>
+          <p style="color:var(--muted);font-size:14px;margin-bottom:4px">Je verzoek is ontvangen. Een IT-medewerker pakt dit zo snel mogelijk op.</p>
+          <div class="success-ref ${T.refClass}">${ref}</div>
+          <p style="font-size:12px;color:var(--light);margin-bottom:22px">Bewaar dit nummer voor vervolgvragen.</p>
+          <button class="btn ${T.btnClass}" onclick="location.reload()">Nieuw verzoek indienen</button>
+        </div>
+      </div></div>`;
+    document.querySelectorAll('.cat-tile').forEach(t=>t.classList.remove('active'));
   }catch(err){
     showToast('Fout bij indienen: '+err.message,'error');
-    btn.disabled=false;
-    btn.innerHTML=T.icon+'&nbsp; '+T.label+' indienen';
+    btn.disabled=false; btn.innerHTML=T.icon+'&nbsp; Indienen';
   }
 }
 
-function showSuccess(ref, naam, type){
-  const T=TYPES[type];
-  $('formArea').innerHTML=`
-    <div class="card" style="animation:fadeIn .25s ease">
-      <div class="card-body">
-        <div class="success-wrap">
-          <span class="success-ico">${T.icon}</span>
-          <h2 style="font-size:20px;font-weight:700;margin-bottom:8px">Verzoek ingediend, ${esc(naam)}!</h2>
-          <p style="color:var(--muted);font-size:14px;margin-bottom:4px">Je verzoek is ontvangen. Een IT-medewerker pakt dit zo snel mogelijk op.</p>
-          <div class="success-ref ${T.refClass}">${ref}</div>
-          <p style="font-size:12px;color:var(--light);margin-bottom:24px">Bewaar dit nummer voor eventuele vervolgvragen.</p>
-          <button class="btn ${T.btnClass}" onclick="location.reload()">Nieuw verzoek indienen</button>
-        </div>
-      </div>
-    </div>`;
-  document.querySelectorAll('.cat-tile').forEach(t=>t.classList.remove('active'));
-}
-
-// ── ADMIN LOGIN ───────────────────────────────────────
+// ── ADMIN ─────────────────────────────────────────────
 function handleAdminClick(){
   if(isAdmin){
     isAdmin=false;
-    $('adminChip').classList.remove('on');
-    $('adot').classList.remove('on');
+    $('adminChip').classList.remove('on');$('adot').classList.remove('on');
     $('chipLabel').textContent='Beheerderslogin';
-    $('viewUser').style.display='';
-    $('viewAdmin').style.display='none';
+    $('viewUser').style.display='';$('viewAdmin').style.display='none';
     showToast('Uitgelogd als beheerder','info');
   }else{
     $('loginModal').style.display='flex';
@@ -634,58 +537,41 @@ function handleAdminClick(){
 }
 function doLogin(){
   if($('lpw').value===ADMIN_PASSWORD){
-    isAdmin=true;
-    $('loginModal').style.display='none';
-    $('lpw').value=''; $('lerr').style.display='none';
-    $('adminChip').classList.add('on');
-    $('adot').classList.add('on');
+    isAdmin=true;$('loginModal').style.display='none';$('lpw').value='';$('lerr').style.display='none';
+    $('adminChip').classList.add('on');$('adot').classList.add('on');
     $('chipLabel').textContent='Beheerder — Uitloggen';
-    $('viewUser').style.display='none';
-    $('viewAdmin').style.display='';
-    loadRequests();
-    showToast('Welkom! Beheerderdashboard actief.','success');
-  }else{
-    $('lerr').style.display='block';
-    $('lpw').value=''; $('lpw').focus();
-  }
+    $('viewUser').style.display='none';$('viewAdmin').style.display='';
+    loadRequests(); showToast('Welkom! Dashboard actief.','success');
+  }else{$('lerr').style.display='block';$('lpw').value='';$('lpw').focus();}
 }
 function closeLogin(){$('loginModal').style.display='none';$('lpw').value='';$('lerr').style.display='none';}
 
-// ── ADMIN DATA ────────────────────────────────────────
 async function loadRequests(){
   if(!isAdmin)return;
-  try{ all=await getAll(); renderStats(); renderTable(); }
-  catch(e){ showToast('Database fout: '+e.message,'error'); }
+  try{all=await getAll();renderStats();renderTable();}
+  catch(e){showToast('Database fout: '+e.message,'error');}
 }
-
 function renderStats(){
   const c=s=>all.filter(r=>r.status===s).length;
-  $('s-totaal').textContent=all.length;
-  $('s-nieuw').textContent=c('Nieuw');
-  $('s-open').textContent=c('Open');
-  $('s-bezig').textContent=c('In behandeling');
-  $('s-opgelost').textContent=c('Opgelost');
+  $('s-totaal').textContent=all.length;$('s-nieuw').textContent=c('Nieuw');
+  $('s-open').textContent=c('Open');$('s-bezig').textContent=c('In behandeling');$('s-opgelost').textContent=c('Opgelost');
 }
-
 function renderTable(){
   const q=($('srch')?.value||'').toLowerCase();
   let data=all;
-  if(filterType!=='Alle')   data=data.filter(r=>r.categorie===filterType);
+  if(filterType!=='Alle') data=data.filter(r=>r.categorie===filterType);
   if(filterStatus!=='Alle') data=data.filter(r=>r.status===filterStatus);
-  if(q) data=data.filter(r=>
-    r.onderwerp?.toLowerCase().includes(q)||r.naam?.toLowerCase().includes(q)||
-    r.email?.toLowerCase().includes(q)||(r.kamer||'').toLowerCase().includes(q)||
-    (r.etage||'').toLowerCase().includes(q)
-  );
+  if(q) data=data.filter(r=>r.onderwerp?.toLowerCase().includes(q)||r.naam?.toLowerCase().includes(q)||(r.kamer||'').toLowerCase().includes(q)||(r.etage||'').toLowerCase().includes(q));
   const tb=$('tBody');
   if(!data.length){tb.innerHTML='<tr><td colspan="11"><div class="empty"><div class="big">📭</div><p>Geen verzoeken gevonden</p></div></td></tr>';return;}
   tb.innerHTML=data.map(r=>{
     const safe=encodeURIComponent(JSON.stringify(r));
+    const pre={scherm:'SCH',meeting:'MTG',vip:'VIP'}[r.categorie]||'REQ';
     return`<tr>
-      <td style="font-size:11px;font-weight:700;color:var(--muted)">${({scherm:'SCH',meeting:'MTG',vip:'VIP'}[r.categorie]||'REQ')}-${String(r.id).slice(-6)}</td>
+      <td style="font-size:11px;font-weight:700;color:var(--muted)">${pre}-${String(r.id).slice(-6)}</td>
       <td>${typeBadge(r.categorie)}</td>
       <td style="max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">${esc(r.onderwerp)}</td>
-      <td><div style="font-weight:600">${esc(r.naam)}</div><div style="font-size:11px;color:var(--muted)">${esc(r.email)}</div></td>
+      <td style="font-weight:600">${esc(r.naam)}</td>
       <td style="font-size:12px">${esc(r.kamer||'–')}</td>
       <td style="font-size:12px">${esc(r.etage||'–')}</td>
       <td style="font-size:12px">${esc(r.plek||'–')}</td>
@@ -699,77 +585,47 @@ function renderTable(){
     </tr>`;
   }).join('');
 }
-
 function setFilter(el){
   const kind=el.dataset.kind;
   document.querySelectorAll(`.fbtn[data-kind="${kind}"]`).forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  if(kind==='type') filterType=el.dataset.f;
-  else filterStatus=el.dataset.f;
+  if(kind==='type') filterType=el.dataset.f; else filterStatus=el.dataset.f;
   renderTable();
 }
-
 async function changeStatus(id,status){
-  try{
-    await patch(id,status);
-    all=all.map(r=>r.id===id?{...r,status}:r);
-    renderStats();
-    showToast(`Status → "${status}"`,'info');
-  }catch(e){showToast('Fout: '+e.message,'error');}
+  try{await patch(id,status);all=all.map(r=>r.id===id?{...r,status}:r);renderStats();showToast(`Status → "${status}"`,'info');}
+  catch(e){showToast('Fout: '+e.message,'error');}
 }
-
 async function confirmDelete(id){
   if(!confirm('Verzoek definitief verwijderen?'))return;
-  try{
-    await remove(id);
-    all=all.filter(r=>r.id!==id);
-    renderStats(); renderTable();
-    showToast('Verzoek verwijderd','info');
-  }catch(e){showToast('Fout: '+e.message,'error');}
+  try{await remove(id);all=all.filter(r=>r.id!==id);renderStats();renderTable();showToast('Verwijderd','info');}
+  catch(e){showToast('Fout: '+e.message,'error');}
 }
-
-// ── DETAIL MODAL ──────────────────────────────────────
 function openDetail(jsonStr){
   const r=JSON.parse(jsonStr);
-  const T=TYPES[r.categorie]||{icon:'📋',label:r.categorie};
-  $('mtitle').textContent=`${T.icon} ${({scherm:'SCH',meeting:'MTG',vip:'VIP'}[r.categorie]||'REQ')}-${String(r.id).slice(-6)} — ${r.onderwerp}`;
+  const T=TYPES[r.categorie]||{icon:'📋'};
+  const pre={scherm:'SCH',meeting:'MTG',vip:'VIP'}[r.categorie]||'REQ';
+  $('mtitle').textContent=`${T.icon} ${pre}-${String(r.id).slice(-6)} — ${r.onderwerp}`;
   $('mbody').innerHTML=`
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-      ${typeBadge(r.categorie)} ${badge(r.status)}
-      <span class="pchip ${esc(r.prioriteit)}">${esc(r.prioriteit)}</span>
-    </div>
-    ${dr('Naam',esc(r.naam))}
-    ${dr('E-mail',`<a href="mailto:${esc(r.email)}" style="color:var(--purple)">${esc(r.email)}</a>`)}
-    ${dr('Afdeling',esc(r.afdeling||'–'))}
-    ${dr('Kamer / Ruimte',esc(r.kamer||'–'))}
-    ${dr('Etage',esc(r.etage||'–'))}
-    ${dr('Plek / Zone',esc(r.plek||'–'))}
-    ${dr('Ingediend',new Date(r.created_at).toLocaleString('nl-NL'))}
-    ${r.datum?dr('Tijdstip',esc(r.datum)):''}
-    <hr style="border:none;border-top:1px solid var(--border-l);margin:14px 0">
-    <div class="fg" style="margin-bottom:16px">
-      <div class="flabel" style="margin-bottom:6px">Omschrijving</div>
-      <div style="background:var(--bg);border-radius:var(--r);padding:12px 14px;font-size:13px;line-height:1.7">${esc(r.omschrijving||'Geen omschrijving opgegeven.')}</div>
-    </div>
-    <hr style="border:none;border-top:1px solid var(--border-l);margin:14px 0">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">${typeBadge(r.categorie)} ${badge(r.status)}<span class="pchip ${esc(r.prioriteit)}">${esc(r.prioriteit)}</span></div>
+    ${dr('Naam',esc(r.naam))}${dr('Kamer / Ruimte',esc(r.kamer||'–'))}${dr('Etage',esc(r.etage||'–'))}${dr('Plek / Zone',esc(r.plek||'–'))}
+    ${dr('Ingediend',new Date(r.created_at).toLocaleString('nl-NL'))}${r.datum?dr('Tijdstip',esc(r.datum)):''}
+    <hr style="border:none;border-top:1px solid var(--border-l);margin:12px 0">
+    <div class="fg" style="margin-bottom:14px"><div class="flabel" style="margin-bottom:5px">Omschrijving</div>
+    <div style="background:var(--bg);border-radius:var(--r);padding:11px 13px;font-size:13px;line-height:1.7">${esc(r.omschrijving||'Geen omschrijving.')}</div></div>
+    <hr style="border:none;border-top:1px solid var(--border-l);margin:12px 0">
     <div class="fg"><label class="flabel">Status wijzigen</label>
-      <select class="fsel" style="margin-top:4px" onchange="changeStatus(${r.id},this.value);$('detailModal').style.display='none'">
-        ${['Nieuw','Open','In behandeling','Opgelost','Gesloten'].map(s=>`<option${r.status===s?' selected':''}>${s}</option>`).join('')}
-      </select>
-    </div>`;
+    <select class="fsel" style="margin-top:4px" onchange="changeStatus(${r.id},this.value);$('detailModal').style.display='none'">
+      ${['Nieuw','Open','In behandeling','Opgelost','Gesloten'].map(s=>`<option${r.status===s?' selected':''}>${s}</option>`).join('')}
+    </select></div>`;
   $('detailModal').style.display='flex';
 }
 function dr(l,v){return`<div class="drow"><span class="dlbl">${l}</span><span>${v}</span></div>`;}
-
-// ── TOAST ─────────────────────────────────────────────
 let tTimer;
 function showToast(msg,type='success'){
   const icons={success:'✅',info:'ℹ️',error:'❌'};
-  $('tico').textContent=icons[type]||'✅';
-  $('tt').textContent=type==='error'?'Fout':type==='info'?'Melding':'Gelukt!';
-  $('tdesc').textContent=msg;
-  const t=$('toast'); t.className=`toast show ${type}`;
-  clearTimeout(tTimer); tTimer=setTimeout(hideToast,4500);
+  $('tico').textContent=icons[type];$('tt').textContent=type==='error'?'Fout':type==='info'?'Melding':'Gelukt!';$('tdesc').textContent=msg;
+  const t=$('toast');t.className=`toast show ${type}`;clearTimeout(tTimer);tTimer=setTimeout(hideToast,4500);
 }
 function hideToast(){$('toast').classList.remove('show');}
 </script>
